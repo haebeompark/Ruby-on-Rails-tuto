@@ -149,7 +149,7 @@ $ cd blog
  $ rails server
  ```
  이후 http://localhost:3000 으로 시도해보기
- [이런 페이지가 나와야함](https://rubykr.github.io/rails_guides/images/rails_welcome.png)
+ [이런 페이지가 나와야한다고](https://rubykr.github.io/rails_guides/images/rails_welcome.png) 하지만 다른 이미지가 나옵니다. 윈도우즈라서 그런지도 모릅니다. 아무튼 동산위에 사람들이 서서 축하해주는 이미지가 나왔음.
  
 ### hello rails 하기
   컨트롤러와 뷰정도는 있어야한다고 함. 아래 명령어로도 충분히 창을 띄울수 있다고 합니다.
