@@ -4,7 +4,7 @@
 ---
 ### 미리 준비해야 하는 것들
 - [루비](http://www.ruby-lang.org/en/downloads)언어 버전 1.8.7 이상
-- [루비젬](https://rubyforge.org/frs/?group_id=126) 패키징 시스템
+- [루비젬](https://rubygems.org/gems/rubyforge/versions/2.0.4) 패키징 시스템
 - [SQLite3 데이터베이스](http://www.sqlite.org/)
 
 ### 루비언어를 배룰 수 있는 무료 문서들
