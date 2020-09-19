@@ -65,6 +65,7 @@ photo 리소스 ID 17번을 삭제하는 액션
 $ rails new blog
 ```
  이 명령은 "blog 디렉토리" 에 "블로그(Blog) 레일즈 어플리케이션" 을 만듭니다. - rails new -h로 레일즈 어플리케이션 생성에 대한 옵션을 확인 할 수 있습니다.
+ - windows 환경에서 실했했더니 Yarn을 설치해 달라고 나와서 [여기](https://yarnpkg.com/lang/en/docs/install/)에서 설치를 했습니다.
 
  blog 어플리케이션을 만들었다면 해당 폴더로 이동합니다.
 ```
