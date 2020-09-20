@@ -196,4 +196,38 @@ $ cd blog
  ```
  
 ### 마이그레이션 실행하기
- db/migrate/{date}_create_posts.rb 파일에서
+ db/migrate/{date}_create_posts.rb 파일에서 다음을 발견할 수 있습니다.
+ ```
+ class CreatePosts < ActiveRecord::Migration
+  def self.up
+    create_table :posts do |t|
+      t.string :name
+      t.string :title
+      t.text :content
+ 
+      t.timestamps
+    end
+  end
+ 
+  def self.down
+    drop_table :posts
+  end
+ end
+ ```
+ 
+ 위 migration파일은 migration 작업을 수행하는 Up과 나중에 적용된 migration을 되돌리는 down 이렇게 두가지의 메소드를 가집니다.
+ 
+ 이 시점에서 다음의 rake 명령을 통해 migration을 실행 할 수 있습니다.
+ ```
+ $ rake db:migrate
+ ```
+ 
+### 링크 추가
+ 생성된 홈페이지에 posts 쓰기를 추가하려면, 링크를 추가해야 합니다. app/views/home/index.html.erb 을 열고 다음과 같이 수정하세요.
+ ```
+ <h1>Hello, Rails!</h1> <%= link_to "My Blog", posts_path %>
+ ```
+ link_to는 레일즈의 뷰 헬퍼로 내장된 메소드 입니다. 이 메소드는 텍스트를 기반으로한 링크를 생성합니다. – 이 경우에는 posts 의 경로 입니다
+ 
+### 브라우저에서 Posts 작업
+ 
