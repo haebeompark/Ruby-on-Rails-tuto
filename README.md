@@ -159,5 +159,28 @@ $ cd blog
   윈도우즈나 루비가 비표준의 방법으로 설치되어 있다면, 아마도 레일즈의 rails 커멘드에 대한 정확한 패스 정보를 루비에게 넘겨야 합니다. :ruby \path\to\your\application\script\rails generate controller home index.
   
   레일즈는 app/views/home/index.html.erb 포함해서 몇가지 파일을 만들겁니다. 아 파일은 home 컨트롤러의 index 액션(메소드)를 위한 템플릿으로 이용됩니다. 이 파일을 텍스트 에디터로 열어서 이 한줄을 포함하도록 수정해 주세요.
-
+```
 <h1>Hello, Rails!</h1>
+```
+
+### 어플리케이션 홈페이지 설정
+ 컨트롤러와 뷰를 만들었습니다. "Hello Rails" 를 보기위해 레일즈에게 요청을 해야합니다.
+ 이번 경우에는 root URL 에다가 “Welcome Aboard” 스모트 테스트 데신에 http://localhost:3000 에서 나타나게 해보죠.
+ 
+ 첫 단계 : 기본 페이지를 어플리케이션에서 삭제합니다.
+ ```
+ $ rm public/index.html
+ ```
+ 레일즈는 컨트롤러가 생성하는 동적인 내용들보다, public 디렉토리내의 정적인 파일을 보여주는 것을 우선시합니다. 그래서 이 파일을 삭제해야하죠.
+ 
+ 이제, 홈페이지의 위치를 레일즈에게 알려주어야 합니다. config/routes.rb 를 에디터로 여세요.
+ root :to 를 포함한 줄을 찾아서 주석을 해제하고 다음과 같이 변경하세요.:
+ 
+ ```
+ Blog::Application.routes.draw do
+ 
+  #...
+  # You can have the root of your site routed with "root"
+  # just remember to delete public/index.html.
+  root :to => "home#index"
+ ```
