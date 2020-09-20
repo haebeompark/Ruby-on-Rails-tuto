@@ -184,3 +184,16 @@ $ cd blog
   # just remember to delete public/index.html.
   root :to => "home#index"
  ```
+이제 http://localhost:3000 에 브라우저로 접속하면, Hello, Rails! 를 볼수 있습니다.
+
+### Scaffolding
+ 레일즈 발판(scaffolding)은 어플리케이션의 주요 요소를 빠르게 만드는 방법입니다. 새로운 리소스를 위해 모델, 뷰, 컨트롤러를 만들기 원하면, 발판(scaffolding)은 적합합니다.
+ 
+### 리소스 만들기
+ 블로그(blog) 어플리케이션의 사례에서 여러분은 발판(Scaffolding)을 이용해서 Post 리소스를 만들수 있습니다. (이 Post 리소스는 블로그에서 하나의 글을 표현합니다.) 이 작업을 위하여 터미널에서 다음을 입력하세요.
+ ```
+ $ rails generate scaffold Post name:string title:string content:text
+ ```
+ 
+### 마이그레이션 실행하기
+ db/migrate/{date}_create_posts.rb 파일에서
