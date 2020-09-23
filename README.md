@@ -233,3 +233,86 @@ $ cd blog
  이제 posts 작업을 할 준비가 되었습니다. 이를 위해서 http://localhost:3000 로 이동한 후에 “My Blog” 링크를 클릭하세요.
  
  레일즈는 여러분의 posts를 위한 index 뷰를 보여줄 겁니다. 현재는 데이터베이스에는 posts 가 저장되어 있지 않지만, New Post를 클릭하고 하나 만들수 있습니다. 그후에 수정하거나, 자세한 내용을 조회하거나, 삭제할 수 있는 posts(글)을 볼 수 있습니다. 모든 로직과 HTML은 단지 rails generate scaffold 명령어 한줄로 생성됩니다.
+ 
+### 데이터 검증 추가하기
+app/models/post.rb 파일을 열어서 다음과 같이 수정하세요.
+```
+class Post < ActiveRecord::Base
+  validates :name,  :presence => true
+  validates :title, :presence => true,
+                    :length => { :minimum => 5 }
+end
+```
+이 수정 사항은 모든 글(post)은 이름(name)과 제목(title)을 가지고 있어야하고, 제목(title)은 최소 5글자 이상이라는걸 보장(확인)합니다. 레일즈는 모델에 대해서 다양한 조건의 데이터 검증을 할수 있습니다. 컬럼의 값의 존재여부, 유일성, 포맷, 그리고 관계된 객체의 존재 여부 검사 같은 것을 포함합니다.
+
+### console 사용하기
+```
+$ rails console
+```
+
+콘솔을 구동 시킨후에, 다음과 같이 어플리케이션의 모델을 수행할 수 있습니다.
+```
+>> p = Post.new(:content => "A new post")
+=> #<Post id: nil, name: nil, title: nil,
+     content: "A new post", created_at: nil,
+     updated_at: nil>
+>> p.save
+=> false
+>> p.errors
+=> #<OrderedHash { :title=>["can't be blank",
+                           "is too short (minimum is 5 characters)"],
+                   :name=>["can't be blank"] }>
+
+```
+이 코드는 새로운 Post 인스턴스를 생성하고, 저장을 시도하는 과정에서 false가 반환되는걸 보여줍니다. (이는 저장이 실패한 것을 의미합니다.) 그리고 글(post)의 errors를 검사(inspecting)하는 코드입니다.
+
+할일을 모두 마쳤으면, exit를 치고 return키를 눌러서 콘솔을 빠져나오세요.
+
+### 모든 글(Posts) 목록 보기
+app/controllers/posts_controller.rb 파일을 열고 index 액션을 보세요.
+```
+def index
+  @posts = Post.all
+ 
+  respond_to do |format|
+    format.html # index.html.erb
+    format.xml  { render :xml => @posts }
+  end
+end
+```
+
+Post.all은 현재 데이터베이스에 있는 모든 글(posts) 정보를 Post 모델로 반환하는 메소드 입니다. 이 호출의 결과는 글(post)의 배열이고 @posts 변수에 저장됩니다.
+
+respond_to 블록은 이 액션에 대한 HTML과 XML 양쪽 모두 취급합니다. 브라우저에게 http://localhost:3000/posts.xml 요청하게 하면, XML 포멧의 글 목록(posts)을 확인할 수 있습니다. 액션 이름에 연결되는 HTML 포멧은 app/views/posts/ 폴더 안에서 찾을 수 있습니다. 레일즈는 액션에서 사용되는 모든 인스턴스 변수를 뷰안에서 사용할 수 있게 구성되어 있습니다. app/views/posts/index.html.erb 내용 입니다.
+```
+<h1>Listing posts</h1>
+ 
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Title</th>
+    <th>Content</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+ 
+<% @posts.each do |post| %>
+  <tr>
+    <td><%= post.name %></td>
+    <td><%= post.title %></td>
+    <td><%= post.content %></td>
+    <td><%= link_to 'Show', post %></td>
+    <td><%= link_to 'Edit', edit_post_path(post) %></td>
+    <td><%= link_to 'Destroy', post, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+ 
+<br />
+ 
+<%= link_to 'New post', new_post_path %>
+```
+
+- link_to는 세부 항목에 대한 링크를 만듭니다.
+- edit_post_path 와 new_post_path 는 레일즈가 제공하는 RESTfule 라우팅 부분입니다. 이 헬퍼들의 다양한 모습을 컨트롤러가 포함한 다른 액션들에서 볼 수 있습니다.
