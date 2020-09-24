@@ -159,5 +159,160 @@ $ cd blog
   윈도우즈나 루비가 비표준의 방법으로 설치되어 있다면, 아마도 레일즈의 rails 커멘드에 대한 정확한 패스 정보를 루비에게 넘겨야 합니다. :ruby \path\to\your\application\script\rails generate controller home index.
   
   레일즈는 app/views/home/index.html.erb 포함해서 몇가지 파일을 만들겁니다. 아 파일은 home 컨트롤러의 index 액션(메소드)를 위한 템플릿으로 이용됩니다. 이 파일을 텍스트 에디터로 열어서 이 한줄을 포함하도록 수정해 주세요.
-
+```
 <h1>Hello, Rails!</h1>
+```
+
+### 어플리케이션 홈페이지 설정
+ 컨트롤러와 뷰를 만들었습니다. "Hello Rails" 를 보기위해 레일즈에게 요청을 해야합니다.
+ 이번 경우에는 root URL 에다가 “Welcome Aboard” 스모트 테스트 데신에 http://localhost:3000 에서 나타나게 해보죠.
+ 
+ 첫 단계 : 기본 페이지를 어플리케이션에서 삭제합니다.
+ ```
+ $ rm public/index.html
+ ```
+ 레일즈는 컨트롤러가 생성하는 동적인 내용들보다, public 디렉토리내의 정적인 파일을 보여주는 것을 우선시합니다. 그래서 이 파일을 삭제해야하죠.
+ 
+ 이제, 홈페이지의 위치를 레일즈에게 알려주어야 합니다. config/routes.rb 를 에디터로 여세요.
+ root :to 를 포함한 줄을 찾아서 주석을 해제하고 다음과 같이 변경하세요.:
+ 
+ ```
+ Blog::Application.routes.draw do
+ 
+  #...
+  # You can have the root of your site routed with "root"
+  # just remember to delete public/index.html.
+  root :to => "home#index"
+ ```
+이제 http://localhost:3000 에 브라우저로 접속하면, Hello, Rails! 를 볼수 있습니다.
+
+### Scaffolding
+ 레일즈 발판(scaffolding)은 어플리케이션의 주요 요소를 빠르게 만드는 방법입니다. 새로운 리소스를 위해 모델, 뷰, 컨트롤러를 만들기 원하면, 발판(scaffolding)은 적합합니다.
+ 
+### 리소스 만들기
+ 블로그(blog) 어플리케이션의 사례에서 여러분은 발판(Scaffolding)을 이용해서 Post 리소스를 만들수 있습니다. (이 Post 리소스는 블로그에서 하나의 글을 표현합니다.) 이 작업을 위하여 터미널에서 다음을 입력하세요.
+ ```
+ $ rails generate scaffold Post name:string title:string content:text
+ ```
+ 
+### 마이그레이션 실행하기
+ db/migrate/{date}_create_posts.rb 파일에서 다음을 발견할 수 있습니다.
+ ```
+ class CreatePosts < ActiveRecord::Migration
+  def self.up
+    create_table :posts do |t|
+      t.string :name
+      t.string :title
+      t.text :content
+ 
+      t.timestamps
+    end
+  end
+ 
+  def self.down
+    drop_table :posts
+  end
+ end
+ ```
+ 
+ 위 migration파일은 migration 작업을 수행하는 Up과 나중에 적용된 migration을 되돌리는 down 이렇게 두가지의 메소드를 가집니다.
+ 
+ 이 시점에서 다음의 rake 명령을 통해 migration을 실행 할 수 있습니다.
+ ```
+ $ rake db:migrate
+ ```
+ 
+### 링크 추가
+ 생성된 홈페이지에 posts 쓰기를 추가하려면, 링크를 추가해야 합니다. app/views/home/index.html.erb 을 열고 다음과 같이 수정하세요.
+ ```
+ <h1>Hello, Rails!</h1> <%= link_to "My Blog", posts_path %>
+ ```
+ link_to는 레일즈의 뷰 헬퍼로 내장된 메소드 입니다. 이 메소드는 텍스트를 기반으로한 링크를 생성합니다. – 이 경우에는 posts 의 경로 입니다
+ 
+### 브라우저에서 Posts 작업
+ 이제 posts 작업을 할 준비가 되었습니다. 이를 위해서 http://localhost:3000 로 이동한 후에 “My Blog” 링크를 클릭하세요.
+ 
+ 레일즈는 여러분의 posts를 위한 index 뷰를 보여줄 겁니다. 현재는 데이터베이스에는 posts 가 저장되어 있지 않지만, New Post를 클릭하고 하나 만들수 있습니다. 그후에 수정하거나, 자세한 내용을 조회하거나, 삭제할 수 있는 posts(글)을 볼 수 있습니다. 모든 로직과 HTML은 단지 rails generate scaffold 명령어 한줄로 생성됩니다.
+ 
+### 데이터 검증 추가하기
+app/models/post.rb 파일을 열어서 다음과 같이 수정하세요.
+```
+class Post < ActiveRecord::Base
+  validates :name,  :presence => true
+  validates :title, :presence => true,
+                    :length => { :minimum => 5 }
+end
+```
+이 수정 사항은 모든 글(post)은 이름(name)과 제목(title)을 가지고 있어야하고, 제목(title)은 최소 5글자 이상이라는걸 보장(확인)합니다. 레일즈는 모델에 대해서 다양한 조건의 데이터 검증을 할수 있습니다. 컬럼의 값의 존재여부, 유일성, 포맷, 그리고 관계된 객체의 존재 여부 검사 같은 것을 포함합니다.
+
+### console 사용하기
+```
+$ rails console
+```
+
+콘솔을 구동 시킨후에, 다음과 같이 어플리케이션의 모델을 수행할 수 있습니다.
+```
+>> p = Post.new(:content => "A new post")
+=> #<Post id: nil, name: nil, title: nil,
+     content: "A new post", created_at: nil,
+     updated_at: nil>
+>> p.save
+=> false
+>> p.errors
+=> #<OrderedHash { :title=>["can't be blank",
+                           "is too short (minimum is 5 characters)"],
+                   :name=>["can't be blank"] }>
+
+```
+이 코드는 새로운 Post 인스턴스를 생성하고, 저장을 시도하는 과정에서 false가 반환되는걸 보여줍니다. (이는 저장이 실패한 것을 의미합니다.) 그리고 글(post)의 errors를 검사(inspecting)하는 코드입니다.
+
+할일을 모두 마쳤으면, exit를 치고 return키를 눌러서 콘솔을 빠져나오세요.
+
+### 모든 글(Posts) 목록 보기
+app/controllers/posts_controller.rb 파일을 열고 index 액션을 보세요.
+```
+def index
+  @posts = Post.all
+ 
+  respond_to do |format|
+    format.html # index.html.erb
+    format.xml  { render :xml => @posts }
+  end
+end
+```
+
+Post.all은 현재 데이터베이스에 있는 모든 글(posts) 정보를 Post 모델로 반환하는 메소드 입니다. 이 호출의 결과는 글(post)의 배열이고 @posts 변수에 저장됩니다.
+
+respond_to 블록은 이 액션에 대한 HTML과 XML 양쪽 모두 취급합니다. 브라우저에게 http://localhost:3000/posts.xml 요청하게 하면, XML 포멧의 글 목록(posts)을 확인할 수 있습니다. 액션 이름에 연결되는 HTML 포멧은 app/views/posts/ 폴더 안에서 찾을 수 있습니다. 레일즈는 액션에서 사용되는 모든 인스턴스 변수를 뷰안에서 사용할 수 있게 구성되어 있습니다. app/views/posts/index.html.erb 내용 입니다.
+```
+<h1>Listing posts</h1>
+ 
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Title</th>
+    <th>Content</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+ 
+<% @posts.each do |post| %>
+  <tr>
+    <td><%= post.name %></td>
+    <td><%= post.title %></td>
+    <td><%= post.content %></td>
+    <td><%= link_to 'Show', post %></td>
+    <td><%= link_to 'Edit', edit_post_path(post) %></td>
+    <td><%= link_to 'Destroy', post, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+ 
+<br />
+ 
+<%= link_to 'New post', new_post_path %>
+```
+
+- link_to는 세부 항목에 대한 링크를 만듭니다.
+- edit_post_path 와 new_post_path 는 레일즈가 제공하는 RESTfule 라우팅 부분입니다. 이 헬퍼들의 다양한 모습을 컨트롤러가 포함한 다른 액션들에서 볼 수 있습니다.
